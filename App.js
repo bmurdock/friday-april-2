@@ -1,15 +1,56 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, Text, View, Image} from 'react-native';
+import { rando, pokeFetch } from './util';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+const maxPoke = 898;
+
+export default class App extends Component {
+  constructor()
+  {
+    super();
+    this.state = {
+        pokemonName: 'Brian',
+        pokemonImage: { uri: ''},
+    };
+  }
+
+  async componentDidMount()
+  {
+      const pokemon = await pokeFetch('pokemon', rando(1, maxPoke));
+      console.log('pokemon: ', pokemon);
+
+
+      // set the state property pokemonName to the
+      // name property of the pokemon that got returned
+      // from my fetch
+      this.setState({
+        pokemonName: pokemon.name,
+        pokemonImage: {uri: pokemon.sprites.front_default}
+      });
+  }
+
+  render()
+  {
+    console.log(pokeFetch('pokemon', 1));
+    return (
+      <View style={styles.container}>
+          <Image
+            style={styles.pokemonImage} 
+            source={this.state.pokemonImage}
+          />
+          <Text>Name: {this.state.pokemonName}</Text>
+          <View>
+            <Text>Types {Date.now()}</Text>
+            <Text>Electric</Text>
+            <Text>Grass</Text>
+          </View>
+      </View>
+    );
+  }
+
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -18,4 +59,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  pokemonImage: {
+    resizeMode: 'contain',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: 'black',
+    width: 200,
+    height: 200,
+  }, 
+
 });
